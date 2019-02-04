@@ -21,7 +21,9 @@ import java.util.Arrays;
  * This class echoes a string called from JavaScript.
  */
 public class MathCalculator extends CordovaPlugin {
-
+    private static final String HASH_TYPE = "SHA-256";
+    public static final int NUM_HASHED_BYTES = 9;
+    public static final int NUM_BASE64_CHAR = 11;
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if(action.equals("add")) {
@@ -77,7 +79,7 @@ public class MathCalculator extends CordovaPlugin {
      * Get all the app signatures for the current package
      * @return
      */
-    public ArrayList<String> getAppSignatures(String args,CallbackContext callback) {
+    public ArrayList<String> getAppSignatures(JSONArray args,CallbackContext callback) {
         ArrayList<String> appCodes = new ArrayList<String>();
 
         try {
@@ -95,9 +97,9 @@ public class MathCalculator extends CordovaPlugin {
                 }
             }
         } catch (PackageManager.NameNotFoundException e) {
-            callback(e);
+            callback.error("error");
         }
-        callback(appCodes);
+        callback.success(appCodes);
     }
 
     private static String hash(String packageName, String signature) {
@@ -115,7 +117,7 @@ public class MathCalculator extends CordovaPlugin {
 
             return base64Hash;
         } catch (NoSuchAlgorithmException e) {
-            return e;
+            return "error";
         }
         return null;
     }
